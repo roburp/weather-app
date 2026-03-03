@@ -3,7 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Weather App</title>
+    <script src="index.js" defer></script>
   </head>
-  <body></body>
+  <body>
+    <h1>Weather App</h1>
+    <form id="weather-form">
+      <input type="text" id="weather-loc-field" name="weather-loc-field" placeholder="Enter Location" />
+      <button type="submit" id="weather-search-btn">Search</button>
+      <span class="error-msg"></span>
+    </form>
+  </body>
 </html>
