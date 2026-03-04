@@ -1,8 +1,14 @@
 const form = document.querySelector("#weather-form");
 
+//weather display box details
+const location = document.querySelector(".location");
+const description = document.querySelector(".description");
+const icon = document.querySelector(".icon");
+const temp = document.querySelector(".temp");
+
 form.addEventListener("submit", (e) => {
   e.preventDefault();
-  fetchWeather();
+  handleWeather();
 });
 
 async function fetchWeather() {
@@ -32,18 +38,51 @@ async function fetchWeather() {
     }
 
     const currentWeather = {
-      location: weatherData.resolvedAddress,
+      location: capitalizeWords(weatherData.resolvedAddress),
       description: weatherData.currentConditions.conditions,
       icon: weatherData.currentConditions.icon, //snow, rain, fog ,wind, cloudy, partly-cloudy-day, partly-cloudy-night, clear-day, clear-night
-      temp: weatherData.currentConditions.temp,
-      feelslike: weatherData.currentConditions.feelslike,
-      rainchance: weatherData.currentConditions.precipprob,
-      humidity: weatherData.currentConditions.humidity,
+      temp: weatherData.currentConditions.temp + "\u00B0C",
+      feelslike: weatherData.currentConditions.feelslike + "\u00B0C",
+      rainchance: weatherData.currentConditions.precipprob + "%",
+      humidity: weatherData.currentConditions.humidity + "%",
     };
+
     console.log(currentWeather);
     return currentWeather;
   } catch (err) {
     console.log("error", err);
+    errorMsg.textContent = "Please enter a valid location";
     return null;
   }
+}
+
+function renderWeather(weather) {
+  location.textContent = weather.location;
+  description.textContent = weather.description;
+  icon.textContent = weather.icon;
+  temp.textContent = weather.temp;
+}
+
+async function handleWeather() {
+  clearDisplayBox();
+  const weatherDetails = await fetchWeather();
+  if (weatherDetails) {
+    renderWeather(weatherDetails);
+  }
+}
+
+function clearDisplayBox() {
+  location.textContent = "";
+  description.textContent = "";
+  icon.innerHTML = "";
+  temp.textContent = "";
+}
+
+function capitalizeWords(str) {
+  return str
+    .trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .map((word) => word[0].toUpperCase() + word.slice(1))
+    .join(" ");
 }
