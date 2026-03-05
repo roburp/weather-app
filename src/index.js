@@ -1,10 +1,16 @@
+import "./styles.css";
+import { iconsMap } from "./icons.js";
+
 const form = document.querySelector("#weather-form");
 
 //weather display box details
+const displayBox = document.querySelector(".display");
 const location = document.querySelector(".location");
+const time = document.querySelector(".time");
 const description = document.querySelector(".description");
 const icon = document.querySelector(".icon");
 const temp = document.querySelector(".temp");
+const wind = document.querySelector(".wind");
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -40,11 +46,13 @@ async function fetchWeather() {
     const currentWeather = {
       location: capitalizeWords(weatherData.resolvedAddress),
       description: weatherData.currentConditions.conditions,
+      time: convertReadableTime(weatherData.currentConditions.datetime),
       icon: weatherData.currentConditions.icon, //snow, rain, fog ,wind, cloudy, partly-cloudy-day, partly-cloudy-night, clear-day, clear-night
       temp: weatherData.currentConditions.temp + "\u00B0C",
       feelslike: weatherData.currentConditions.feelslike + "\u00B0C",
       rainchance: weatherData.currentConditions.precipprob + "%",
       humidity: weatherData.currentConditions.humidity + "%",
+      wind: weatherData.currentConditions.windspeed + " m/s",
     };
 
     console.log(currentWeather);
@@ -57,10 +65,27 @@ async function fetchWeather() {
 }
 
 function renderWeather(weather) {
-  location.textContent = weather.location;
-  description.textContent = weather.description;
-  icon.textContent = weather.icon;
-  temp.textContent = weather.temp;
+  //append to displayBox
+
+  const loctimeDiv = createDiv("location-time"); //location and time
+  const locationDiv = createDiv("location", weather.location);
+  const timeDiv = createDiv("time", weather.time);
+
+  const iconDescDiv = createDiv("icon-desc"); //details
+  //different div creation for icon - image
+  const iconDiv = createDiv("icon");
+  iconDiv.append(handleIcon(weather.icon));
+  const descDiv = createDiv("description", weather.description);
+
+  const otherDetailsDiv = createDiv("other-details");
+  const tempDiv = createDiv("temp", `Temperature: ${weather.temp}`);
+  const windDiv = createDiv("wind", `Wind: ${weather.wind}`);
+
+  loctimeDiv.append(locationDiv, timeDiv);
+  iconDescDiv.append(iconDiv, descDiv);
+  otherDetailsDiv.append(tempDiv, windDiv);
+
+  displayBox.append(loctimeDiv, iconDescDiv, otherDetailsDiv);
 }
 
 async function handleWeather() {
@@ -72,10 +97,7 @@ async function handleWeather() {
 }
 
 function clearDisplayBox() {
-  location.textContent = "";
-  description.textContent = "";
-  icon.innerHTML = "";
-  temp.textContent = "";
+  displayBox.innerHTML = "";
 }
 
 function capitalizeWords(str) {
@@ -85,4 +107,28 @@ function capitalizeWords(str) {
     .split(/\s+/)
     .map((word) => word[0].toUpperCase() + word.slice(1))
     .join(" ");
+}
+
+//convert to human readable time - xx:xx AM/PM
+function convertReadableTime(time) {
+  return new Date(`1970-01-01T${time}`).toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+}
+
+function handleIcon(iconName) {
+  //snow, rain, fog ,wind, cloudy, partly-cloudy-day, partly-cloudy-night, clear-day, clear-night
+  const icon = document.createElement("img");
+  icon.src = iconsMap[iconName] || "";
+  icon.alt = iconName;
+  return icon;
+}
+
+function createDiv(className, text) {
+  const div = document.createElement("div");
+  div.className = className;
+  div.textContent = text || "";
+  return div;
 }

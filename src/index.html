@@ -3,24 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Weather App</title>
+    <title>Today's Weather</title>
     <script src="index.js" defer></script>
   </head>
   <body>
     <h1>Weather App</h1>
     <form id="weather-form">
-      <input type="text" id="weather-loc-field" name="weather-loc-field" placeholder="Enter Location" />
-      <button type="submit" id="weather-search-btn">Search</button>
-      <span class="error-msg"></span>
+      <div class="fields">
+        <input type="text" id="weather-loc-field" name="weather-loc-field" placeholder="Enter Location" />
+        <button type="submit" id="weather-search-btn">Search</button>
+      </div>
+      <div class="error">
+        <span class="error-msg"></span>
+      </div>
     </form>
 
-    <div class="display">
-      <div class="current-weather">
-        <div class="location"></div>
-        <div class="description"></div>
-        <div class="icon"></div>
-        <div class="temp"></div>
-      </div>
-    </div>
+    <div class="display"></div>
   </body>
 </html>
