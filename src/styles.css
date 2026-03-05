@@ -37,27 +37,37 @@ h1 {
 
 /* display box */
 .display {
-  display: flex; /* block-level flex */
+  display: flex;
   flex-direction: column;
   text-align: center;
   padding: 1rem;
   min-height: 100px;
-  min-width: 100px;
+  min-width: 350px;
   border: 1px solid black;
 
-  /* shrink to content */
   width: fit-content;
-  margin: 1rem auto; /* centers horizontally */
+  margin: 1rem auto;
+}
+
+.display:empty {
+  border: none;
+  padding: 0;
 }
 
 .location-time {
   display: flex;
-  gap: 1.5rem;
+  flex-direction: column;
+  align-items: flex-start;
   padding-bottom: 1rem;
+  gap: 0.2rem;
 }
 
-.time {
-  margin-left: auto;
+.location {
+  font-size: 1.5rem;
+  white-space: normal;
+  max-width: 85%;
+  overflow-wrap: break-word;
+  text-align: left;
 }
 
 .location-time,
@@ -69,6 +79,10 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.description {
+  font-size: 1.2rem;
 }
 
 .other-details {
