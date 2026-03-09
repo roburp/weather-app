@@ -1,5 +1,4 @@
 import "./styles.css";
-import { iconsMap } from "./icons.js";
 
 const form = document.querySelector("#weather-form");
 
@@ -16,6 +15,14 @@ form.addEventListener("submit", (e) => {
   e.preventDefault();
   handleWeather();
 });
+
+async function handleWeather() {
+  clearDisplayBox();
+  const weatherDetails = await fetchWeather();
+  if (weatherDetails) {
+    renderWeather(weatherDetails);
+  }
+}
 
 async function fetchWeather() {
   const locationField = document.querySelector("#weather-loc-field");
@@ -64,7 +71,7 @@ async function fetchWeather() {
   }
 }
 
-function renderWeather(weather) {
+async function renderWeather(weather) {
   //append to displayBox
 
   const loctimeDiv = createDiv("location-time"); //location and time
@@ -72,9 +79,12 @@ function renderWeather(weather) {
   const timeDiv = createDiv("time", weather.time);
 
   const iconDescDiv = createDiv("icon-desc"); //details
-  //different div creation for icon - image
+  //different div creation for icon & description
+
   const iconDiv = createDiv("icon");
-  iconDiv.append(handleIcon(weather.icon));
+  const iconImg = await loadIcon(weather.icon);
+  iconDiv.append(iconImg);
+
   const descDiv = createDiv("description", weather.description);
 
   const otherDetailsDiv = createDiv("other-details");
@@ -86,14 +96,6 @@ function renderWeather(weather) {
   otherDetailsDiv.append(tempDiv, windDiv);
 
   displayBox.append(loctimeDiv, iconDescDiv, otherDetailsDiv);
-}
-
-async function handleWeather() {
-  clearDisplayBox();
-  const weatherDetails = await fetchWeather();
-  if (weatherDetails) {
-    renderWeather(weatherDetails);
-  }
 }
 
 function clearDisplayBox() {
@@ -118,12 +120,13 @@ function convertReadableTime(time) {
   });
 }
 
-function handleIcon(iconName) {
-  //snow, rain, fog ,wind, cloudy, partly-cloudy-day, partly-cloudy-night, clear-day, clear-night
-  const icon = document.createElement("img");
-  icon.src = iconsMap[iconName] || "";
-  icon.alt = iconName;
-  return icon;
+//returns a Promise that resolves to an <img> element with the SVG as src
+async function loadIcon(iconName) {
+  const icon = await import(`./assets/${iconName}.svg`);
+  const iconImg = document.createElement("img");
+  iconImg.src = icon.default; // icon is a module object; .default contains the SVG file path
+  iconImg.alt = iconName;
+  return iconImg;
 }
 
 function createDiv(className, text) {
